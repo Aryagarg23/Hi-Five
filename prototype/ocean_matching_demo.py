@@ -10,8 +10,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
-plt.style.use("/home/arya/projects/hackathons/.style/garg-paper.mplstyle")
-
 FIGURES_DIR = os.path.join(os.path.dirname(__file__), "figures")
 
 INK = "#282215"

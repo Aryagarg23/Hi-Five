@@ -20,17 +20,29 @@ The bet was that swiping on personality compatibility surfaces better friend mat
 - **Matching**: a Cypher query pulls every `Person` node and computes cosine similarity per trait against the querying user directly in the graph (`src/server/neo4j_db/relationship_scoring.py`). The five per-trait similarities get averaged, then blended with Jaccard similarity over interest tags: `0.6 * vector_similarity + 0.4 * tag_jaccard`. Top matches come back through a Flask API (`src/server/app/app.py`) that the Next.js frontend calls for cards, swipes, friend requests, and messages.
 - **Reveal window**: friendship duration and the 48-hour countdown are tracked client-side off `friendshipStartDate` (`app/Utils/getFriendshipDuration.tsx`).
 
+## Run the UI
+
+From the repository root, install the JavaScript dependencies and start the Next.js app:
+
+```sh
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`. This starts the UI only. The Flask API requires Neo4j and a separate embedding service; the checked-in backend still contains placeholder Neo4j connection values and an embedding endpoint outside this repository, so a working full-stack setup cannot be reproduced from this checkout alone.
+
 ## Prototype
 
 `prototype/ocean_matching_demo.py` draws the matching pipeline as designed at the hackathon — no synthetic users, no measured results, just the flow and the real scoring formula pulled from `src/server/neo4j_db/relationship_scoring.py`: `score = 0.6 * vector_similarity + 0.4 * tag_jaccard`, where `vector_similarity` is the mean cosine similarity across the five OCEAN trait embeddings and `tag_jaccard` is Jaccard similarity over interest tags. It also lays out the 48-hour anonymous chat window as a timeline and the reveal/dissolve branch at the end of it.
 
-Run it locally to regenerate the diagram:
+The diagram needs Python and Matplotlib. Run it from the repository root:
 
-```bash
-MPLCONFIGDIR=/home/arya/projects/hackathons/.mplcache /home/arya/projects/hackathons/.venv/bin/python prototype/ocean_matching_demo.py
+```sh
+python -m pip install matplotlib
+python prototype/ocean_matching_demo.py
 ```
 
-It writes one PNG to `prototype/figures/` (not committed — regenerate locally):
+It writes one PNG to `prototype/figures/` (ignored by Git; regenerate locally):
 
 ![Hi-Five matching pipeline: OCEAN assessment and interest tags feed embeddings and tag sets, combined into score = 0.6 * vector_similarity + 0.4 * tag_jaccard, producing a match that opens a 48-hour anonymous chat window, after which both people opting in reveals identities or the match dissolves](https://vircgxpcwyvniemqmdyi.supabase.co/storage/v1/object/public/media/writing/Hi-Five/matching_flow.png)
 
